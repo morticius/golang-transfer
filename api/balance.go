@@ -25,10 +25,10 @@ func (server *Server) GetBalance(c *gin.Context) {
 		return
 	}
 
-	var res []BalanceResponse
+	var res []*BalanceResponse
 
 	for _, val := range balance {
-		res = append(res, BalanceResponse{
+		res = append(res, &BalanceResponse{
 			Code:    val.Code,
 			Balance: float64(val.Balance) / 1000,
 		})

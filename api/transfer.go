@@ -24,12 +24,6 @@ func (server *Server) createTransfer(c *gin.Context) {
 		return
 	}
 
-	cur, err := server.store.GetCurrencyByCode(c, r.Currency)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
 	uid, err := strconv.Atoi(r.UserID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, errorResponse(err))
@@ -47,6 +41,12 @@ func (server *Server) createTransfer(c *gin.Context) {
 		return
 	}
 
+	cur, err := server.store.GetCurrencyByCode(c, r.Currency)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
 	arg := db.CreateTransferParams{
 		UserID:     int64(uid),
 		CurrencyID: cur.ID,
@@ -54,10 +54,10 @@ func (server *Server) createTransfer(c *gin.Context) {
 		TimePlaced: time,
 	}
 
-	result, err := server.store.CreateTransfer(c, arg)
+	_, err = server.store.CreateTransfer(c, arg)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse(err))
 	}
 
-	c.JSON(http.StatusOK, result)
+	c.Status(http.StatusCreated)
 }
